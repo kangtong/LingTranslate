@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -19,7 +18,6 @@ public class MainActivity extends AppCompatActivity implements
     TranslateFragment.OnFragmentInteractionListener,
     ItemFragment.OnListFragmentInteractionListener {
   @BindView(R.id.frame_container) FrameLayout frameContainer;
-  FragmentTransaction fragmentTransaction;
   Fragment translateFragment;
   ItemFragment itemFragment;
 
@@ -32,9 +30,9 @@ public class MainActivity extends AppCompatActivity implements
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     translateFragment = new TranslateFragment();
     itemFragment = new ItemFragment();
-    fragmentTransaction = getSupportFragmentManager().beginTransaction();
-    fragmentTransaction.replace(R.id.frame_container, translateFragment);
-    fragmentTransaction.commit();
+    getSupportFragmentManager().beginTransaction()
+        .add(R.id.frame_container, translateFragment)
+        .commit();
   }
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -43,12 +41,15 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
       switch (item.getItemId()) {
         case R.id.navigation_home:
-          fragmentTransaction.replace(R.id.frame_container, translateFragment);
-          fragmentTransaction.commit();
+          getSupportFragmentManager().beginTransaction()
+              .replace(R.id.frame_container, translateFragment)
+              .commit();
+
           return true;
         case R.id.navigation_dashboard:
-          fragmentTransaction.replace(R.id.frame_container, itemFragment);
-          //fragmentTransaction.commit();
+          getSupportFragmentManager().beginTransaction()
+              .replace(R.id.frame_container, itemFragment)
+              .commit();
           return true;
         case R.id.navigation_notifications:
           return true;
