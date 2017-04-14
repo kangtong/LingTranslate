@@ -1,43 +1,67 @@
 package com.kangtong.lingtranslate;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.FrameLayout;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import com.kangtong.lingtranslate.ui.notice.ItemFragment;
+import com.kangtong.lingtranslate.ui.notice.dummy.DummyContent;
+import com.kangtong.lingtranslate.ui.translate.TranslateFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+    TranslateFragment.OnFragmentInteractionListener,
+    ItemFragment.OnListFragmentInteractionListener {
+  @BindView(R.id.frame_container) FrameLayout frameContainer;
+  FragmentTransaction fragmentTransaction;
+  Fragment translateFragment;
+  ItemFragment itemFragment;
 
-  private TextView mTextMessage;
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+    ButterKnife.bind(this);
+    BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+    navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    translateFragment = new TranslateFragment();
+    itemFragment = new ItemFragment();
+    fragmentTransaction = getSupportFragmentManager().beginTransaction();
+    fragmentTransaction.replace(R.id.frame_container, translateFragment);
+    fragmentTransaction.commit();
+  }
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
       = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
       switch (item.getItemId()) {
         case R.id.navigation_home:
-          mTextMessage.setText(R.string.title_home);
+          fragmentTransaction.replace(R.id.frame_container, translateFragment);
+          fragmentTransaction.commit();
           return true;
         case R.id.navigation_dashboard:
-          mTextMessage.setText(R.string.title_dashboard);
+          fragmentTransaction.replace(R.id.frame_container, itemFragment);
+          //fragmentTransaction.commit();
           return true;
         case R.id.navigation_notifications:
-          mTextMessage.setText(R.string.title_notifications);
           return true;
       }
       return false;
     }
   };
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+  @Override public void onFragmentInteraction(Uri uri) {
 
-    mTextMessage = (TextView) findViewById(R.id.message);
-    BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-    navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+  }
+
+  @Override public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
   }
 }
