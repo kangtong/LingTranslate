@@ -60,7 +60,7 @@ public class MainFragment extends Fragment {
       fragmentList = new ArrayList<>();
       fragmentList.add(new TranslateFragment());
       fragmentList.add(new TranslateFragment());
-      fragmentList.add(new TranslateFragment());
+      fragmentList.add(new BaiduFragment());
       fragmentList.add(new TranslateFragment());
     }
 

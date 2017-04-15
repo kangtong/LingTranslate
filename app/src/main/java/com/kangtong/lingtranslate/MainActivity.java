@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -19,9 +18,6 @@ public class MainActivity extends AppCompatActivity implements
     TranslateFragment.OnFragmentInteractionListener,
     ItemFragment.OnListFragmentInteractionListener {
   @BindView(R.id.frame_container) FrameLayout frameContainer;
-  MainFragment mainFragment;
-  Fragment translateFragment;
-  ItemFragment itemFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +26,8 @@ public class MainActivity extends AppCompatActivity implements
     ButterKnife.bind(this);
     BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-    translateFragment = new TranslateFragment();
-    itemFragment = new ItemFragment();
-    mainFragment = new MainFragment();
     getSupportFragmentManager().beginTransaction()
-        .add(R.id.frame_container, mainFragment)
+        .add(R.id.frame_container, new MainFragment())
         .commit();
   }
 
@@ -45,13 +38,12 @@ public class MainActivity extends AppCompatActivity implements
       switch (item.getItemId()) {
         case R.id.navigation_home:
           getSupportFragmentManager().beginTransaction()
-              .replace(R.id.frame_container, mainFragment)
+              .replace(R.id.frame_container, new MainFragment())
               .commit();
-
           return true;
         case R.id.navigation_dashboard:
           getSupportFragmentManager().beginTransaction()
-              .replace(R.id.frame_container, itemFragment)
+              .replace(R.id.frame_container, new ItemFragment())
               .commit();
           return true;
       }
