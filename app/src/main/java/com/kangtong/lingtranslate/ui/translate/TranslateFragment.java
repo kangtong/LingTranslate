@@ -173,6 +173,7 @@ public class TranslateFragment extends Fragment {
             new Callback<BaiduResult>() {
               @Override
               public void onResponse(Call<BaiduResult> call, Response<BaiduResult> response) {
+
                 if (text.equals(response.body().trans_result.get(0).dst)) {
                   APIService.baiduService()
                       .getBaidu(text, "auto", "zh", Constant.BAIDU_APPID, salt, sign)

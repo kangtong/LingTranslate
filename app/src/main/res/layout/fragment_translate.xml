@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.translate.TranslateFragment" android:orientation="vertical">
-
   <android.support.v4.widget.NestedScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent">
@@ -12,29 +11,27 @@
         android:orientation="vertical">
       <android.support.design.widget.TextInputLayout
           android:layout_width="match_parent"
-          android:layout_height="match_parent" android:layout_marginTop="10dp"
-
-      >
+          android:layout_height="match_parent" android:layout_marginTop="10dp">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="请输入翻译内容" android:id="@+id/edit_translate"
             android:minLines="4"
-            android:gravity="top"
-        />
+            android:gravity="top"/>
       </android.support.design.widget.TextInputLayout>
       <Button
           android:text="翻译"
           android:layout_width="match_parent"
           android:layout_height="wrap_content" android:id="@+id/btn_translate"
-          android:layout_weight="1"/>
+          android:layout_weight="1"
+          android:background="@color/colorAccent"
+      />
       <android.support.v7.widget.CardView
           android:layout_width="match_parent"
           android:layout_height="wrap_content" android:id="@+id/cardview_youdao"
           android:visibility="gone" android:padding="14dp"
           android:layout_marginTop="12dp"
-          app:cardElevation="0dp"
-      >
+          app:cardElevation="0dp">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"

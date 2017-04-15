@@ -12,12 +12,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.kangtong.lingtranslate.ui.notice.ItemFragment;
 import com.kangtong.lingtranslate.ui.notice.dummy.DummyContent;
+import com.kangtong.lingtranslate.ui.translate.MainFragment;
 import com.kangtong.lingtranslate.ui.translate.TranslateFragment;
 
 public class MainActivity extends AppCompatActivity implements
     TranslateFragment.OnFragmentInteractionListener,
     ItemFragment.OnListFragmentInteractionListener {
   @BindView(R.id.frame_container) FrameLayout frameContainer;
+  MainFragment mainFragment;
   Fragment translateFragment;
   ItemFragment itemFragment;
 
@@ -30,8 +32,9 @@ public class MainActivity extends AppCompatActivity implements
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     translateFragment = new TranslateFragment();
     itemFragment = new ItemFragment();
+    mainFragment = new MainFragment();
     getSupportFragmentManager().beginTransaction()
-        .add(R.id.frame_container, translateFragment)
+        .add(R.id.frame_container, mainFragment)
         .commit();
   }
 
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements
       switch (item.getItemId()) {
         case R.id.navigation_home:
           getSupportFragmentManager().beginTransaction()
-              .replace(R.id.frame_container, translateFragment)
+              .replace(R.id.frame_container, mainFragment)
               .commit();
 
           return true;
@@ -50,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements
           getSupportFragmentManager().beginTransaction()
               .replace(R.id.frame_container, itemFragment)
               .commit();
-          return true;
-        case R.id.navigation_notifications:
           return true;
       }
       return false;
