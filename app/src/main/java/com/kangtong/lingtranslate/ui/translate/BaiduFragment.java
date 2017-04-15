@@ -65,6 +65,17 @@ public class BaiduFragment extends Fragment {
             android.R.layout.simple_spinner_item);
     adapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinnerTo.setAdapter(adapterTo);
+    btnBaiduFavorite.setOnFavoriteChangeListener(
+        new MaterialFavoriteButton.OnFavoriteChangeListener() {
+          @Override
+          public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+            if (favorite) {
+              // TODO: 2017/4/15 收藏
+            } else {
+              // TODO: 2017/4/15 取消收藏
+            }
+          }
+        });
     return view;
   }
 
