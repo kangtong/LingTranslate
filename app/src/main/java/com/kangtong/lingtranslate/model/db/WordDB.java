@@ -1,8 +1,5 @@
 package com.kangtong.lingtranslate.model.db;
 
-import java.util.UUID;
-import org.litepal.annotation.Column;
-
 /**
  * 作者：Create on 2017/4/16 00:48  by dq_dana
  * 邮箱：dqdanavera@gmail.com
@@ -15,8 +12,7 @@ public class WordDB extends BaseDBBean {
   public static final String KEY_JINSHAN = "jinshan";
 
   // 我的设计如下： 源 - 源语种 - 结果 - 结果语种 - 翻译工具类型
-  @Column(unique = true, defaultValue = "unknown")
-  public UUID id;
+  public int id;
   public String src;
   public String srcLan;
   public String dst;
@@ -24,7 +20,6 @@ public class WordDB extends BaseDBBean {
   public String type;
 
   public WordDB(String src, String srcLan, String dst, String dstLan, String type) {
-    this.id = UUID.randomUUID();
     this.src = src;
     this.srcLan = srcLan;
     this.dst = dst;
@@ -32,7 +27,7 @@ public class WordDB extends BaseDBBean {
     this.type = type;
   }
 
-  public UUID getId() {
+  public int getId() {
     return id;
   }
 

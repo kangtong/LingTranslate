@@ -1,6 +1,7 @@
 package com.kangtong.lingtranslate.util;
 
 import com.kangtong.lingtranslate.model.db.WordDB;
+import org.litepal.crud.DataSupport;
 
 /**
  * 作者：Create on 2017/4/16 11:37  by dq_dana
@@ -10,12 +11,22 @@ import com.kangtong.lingtranslate.model.db.WordDB;
 public class DBUtils {
 
   /**
-   * 收藏：添加至本地数据库
+   * 添加至本地数据库
    *
-   * @param bean ：源数据
+   * @param bean ：欲添加的新数据
    * @return ： 是否成功
    */
-  public static boolean addIntoNote(WordDB bean) {
+  public static boolean insertIntoNote(WordDB bean) {
     return bean.save();
+  }
+
+  /**
+   * 从本地数据库删除指定数据
+   *
+   * @param id ：欲删除的新数据
+   * @return ： 是否成功
+   */
+  public static boolean deleteFromNote(int id) {
+    return (DataSupport.delete(WordDB.class, id) != 0);
   }
 }

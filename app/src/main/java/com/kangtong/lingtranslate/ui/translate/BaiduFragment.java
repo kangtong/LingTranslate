@@ -48,6 +48,8 @@ public class BaiduFragment extends Fragment {
   @BindView(R.id.btn_baidu_favorite) MaterialFavoriteButton btnBaiduFavorite;
   @BindView(R.id.linear_tool) LinearLayout linearTool;
 
+  private WordDB bean;
+
   public BaiduFragment() {
     // Required empty public constructor
   }
@@ -91,34 +93,38 @@ public class BaiduFragment extends Fragment {
       }
     });
 
-    btnBaiduFavorite.setOnFavoriteChangeListener(
-        new MaterialFavoriteButton.OnFavoriteChangeListener() {
-          @Override
-          public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-            if (favorite) {
-              if (textBaidu.getText().toString().isEmpty()) {
-                Toast.makeText(getContext(), "请先完成翻译~", Toast.LENGTH_SHORT).show();
-                btnBaiduFavorite.setFavorite(false);
-                return;
-              }
-              WordDB bean = new WordDB(
-                  editBaiduTranslate.getText().toString(),
-                  spinnerFrom.getSelectedItem().toString(),
-                  textBaidu.getText().toString(),
-                  spinnerTo.getSelectedItem().toString(),
-                  WordDB.KEY_BAIDU);
-              if (DBUtils.addIntoNote(bean)) {
-                Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
-              } else {
-                Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
-                // TODO: 2017/4/16 dengqi:  添加失败的话，这里应该把状态变回去，不知道下面这语句对不对 = =
-                btnBaiduFavorite.setFavorite(false);
-              }
-            } else {
-              // TODO: 2017/4/15 取消收藏
-            }
+    btnBaiduFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+      @Override public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+        if (favorite) {
+          if (textBaidu.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "请先完成翻译~", Toast.LENGTH_SHORT).show();
+            btnBaiduFavorite.setFavorite(false);
+            return;
           }
-        });
+          bean = new WordDB(
+              editBaiduTranslate.getText().toString(),
+              spinnerFrom.getSelectedItem().toString(),
+              textBaidu.getText().toString(),
+              spinnerTo.getSelectedItem().toString(),
+              WordDB.KEY_BAIDU);
+          if (DBUtils.insertIntoNote(bean)) {
+            Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
+          } else {
+            Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+            // TODO: 2017/4/16 dengqi:  添加失败的话，这里应该把状态变回去，不知道下面这语句对不对 = =
+            btnBaiduFavorite.setFavorite(false);
+          }
+        } else {
+          // 取消收藏很简单，其实就是把最后一条数据删除掉
+          if (DBUtils.deleteFromNote(bean.getId())) {
+            Toast.makeText(getContext(), "已从单词本成功移除~", Toast.LENGTH_SHORT).show();
+          } else {
+            Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+          }
+        }
+      }
+    });
+
     return view;
   }
 

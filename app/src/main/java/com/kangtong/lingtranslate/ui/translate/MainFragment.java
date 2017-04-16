@@ -24,9 +24,15 @@ public class MainFragment extends Fragment {
   @BindView(R.id.tab_layout) TabLayout tabLayout;
   @BindView(R.id.view_pager) ViewPager viewPager;
   Unbinder unbinder;
+  private int lastIndex = 0;
 
   public MainFragment() {
     // Required empty public constructor
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    viewPager.setCurrentItem(lastIndex, true);
   }
 
   @Override
@@ -37,6 +43,20 @@ public class MainFragment extends Fragment {
     unbinder = ButterKnife.bind(this, view);
     TranslatePagerAdapter translatePagerAdapter = new TranslatePagerAdapter(getFragmentManager());
     viewPager.setAdapter(translatePagerAdapter);
+    viewPager.setOffscreenPageLimit(translatePagerAdapter.getCount());
+    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+      @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+      }
+
+      @Override public void onPageSelected(int position) {
+        lastIndex = position; // 监听滑动到哪一个界面了
+      }
+
+      @Override public void onPageScrollStateChanged(int state) {
+
+      }
+    });
     tabLayout.setupWithViewPager(viewPager);
     return view;
   }
