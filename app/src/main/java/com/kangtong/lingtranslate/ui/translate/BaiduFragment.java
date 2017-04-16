@@ -111,7 +111,6 @@ public class BaiduFragment extends Fragment {
             Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
           } else {
             Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
-            // TODO: 2017/4/16 dengqi:  添加失败的话，这里应该把状态变回去，不知道下面这语句对不对 = =
             btnBaiduFavorite.setFavorite(false);
           }
         } else {

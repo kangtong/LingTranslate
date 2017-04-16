@@ -1,12 +1,10 @@
 package com.kangtong.lingtranslate;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
-import com.kangtong.lingtranslate.model.db.WordDB;
-import java.util.List;
 import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
-import org.litepal.crud.DataSupport;
-import org.litepal.crud.callback.FindMultiCallback;
 
 /**
  * 作者：Create on 2017/4/16 00:42  by dq_dana
@@ -17,10 +15,16 @@ public class LingApplication extends LitePalApplication {
 
   // 这里只是继承了 LitePalApplication， 什么都不用写， 如果需要初始化其他东西，再自行添加
 
+  private static volatile Context sAppContext;
+
   @Override public void onCreate() {
     super.onCreate();
-
+    initialize();
     initDB();
+  }
+
+  private void initialize() {
+    sAppContext = getApplicationContext();
   }
 
   /**
@@ -28,5 +32,13 @@ public class LingApplication extends LitePalApplication {
    */
   private void initDB() {
     SQLiteDatabase db = LitePal.getDatabase();
+  }
+
+  public static Resources appResources() {
+    return appContext().getResources();
+  }
+
+  public static Context appContext() {
+    return sAppContext;
   }
 }

@@ -24,7 +24,7 @@ public class WordNoteFragment extends Fragment {
 
   private static final String ARG_COLUMN_COUNT = "column-count"; // 用以切换list or gird
   private int mColumnCount = 1;
-  private OnListFragmentInteractionListener mListener;
+  private OnFragmentListener mListener;
 
   private WordNoteAdapter mAdapter; // 适配器
   private List<WordDB> mWordDBList = new ArrayList<>(); // 送数据库返回的
@@ -79,8 +79,8 @@ public class WordNoteFragment extends Fragment {
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
-    if (context instanceof OnListFragmentInteractionListener) {
-      mListener = (OnListFragmentInteractionListener) context;
+    if (context instanceof OnFragmentListener) {
+      mListener = (OnFragmentListener) context;
     } else {
       throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
     }
@@ -91,7 +91,9 @@ public class WordNoteFragment extends Fragment {
     mListener = null;
   }
 
-  public interface OnListFragmentInteractionListener {
-    void onListFragmentInteraction(WordDB item);
+  public interface OnFragmentListener {
+    void onClickFragment(WordDB item);
+
+    void onLongClickFragment(WordDB item);
   }
 }
