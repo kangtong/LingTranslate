@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,9 @@ import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.kangtong.lingtranslate.R;
 import com.kangtong.lingtranslate.constant.Constant;
 import com.kangtong.lingtranslate.model.BaiduResult;
+import com.kangtong.lingtranslate.model.db.WordDB;
 import com.kangtong.lingtranslate.service.APIService;
+import com.kangtong.lingtranslate.util.DBUtils;
 import com.kangtong.lingtranslate.util.MD5;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +47,8 @@ public class BaiduFragment extends Fragment {
   @BindView(R.id.text_baidu) TextView textBaidu;
   @BindView(R.id.btn_baidu_favorite) MaterialFavoriteButton btnBaiduFavorite;
   @BindView(R.id.linear_tool) LinearLayout linearTool;
+
+  private WordDB bean;
 
   public BaiduFragment() {
     // Required empty public constructor
@@ -65,17 +71,60 @@ public class BaiduFragment extends Fragment {
             android.R.layout.simple_spinner_item);
     adapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinnerTo.setAdapter(adapterTo);
-    btnBaiduFavorite.setOnFavoriteChangeListener(
-        new MaterialFavoriteButton.OnFavoriteChangeListener() {
-          @Override
-          public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-            if (favorite) {
-              // TODO: 2017/4/15 收藏
-            } else {
-              // TODO: 2017/4/15 取消收藏
-            }
+
+    // 需要做一个检查
+    editBaiduTranslate.addTextChangedListener(new TextWatcher() {
+      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+      }
+
+      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (s.toString().isEmpty()) {
+          linearTool.setVisibility(View.GONE);
+          textBaidu.setVisibility(View.GONE);
+        } else {
+          btnBaiduFavorite.setFavorite(false);
+          textBaidu.setText("");
+        }
+      }
+
+      @Override public void afterTextChanged(Editable s) {
+
+      }
+    });
+
+    btnBaiduFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+      @Override public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+        if (favorite) {
+          if (textBaidu.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "请先完成翻译~", Toast.LENGTH_SHORT).show();
+            btnBaiduFavorite.setFavorite(false);
+            return;
           }
-        });
+          bean = new WordDB(
+              editBaiduTranslate.getText().toString(),
+              spinnerFrom.getSelectedItem().toString(),
+              textBaidu.getText().toString(),
+              spinnerTo.getSelectedItem().toString(),
+              WordDB.KEY_BAIDU);
+          if (DBUtils.insertIntoNote(bean)) {
+            Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
+          } else {
+            Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+            // TODO: 2017/4/16 dengqi:  添加失败的话，这里应该把状态变回去，不知道下面这语句对不对 = =
+            btnBaiduFavorite.setFavorite(false);
+          }
+        } else {
+          // 取消收藏很简单，其实就是把最后一条数据删除掉
+          if (DBUtils.deleteFromNote(bean.getId())) {
+            Toast.makeText(getContext(), "已从单词本成功移除~", Toast.LENGTH_SHORT).show();
+          } else {
+            Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+          }
+        }
+      }
+    });
+
     return view;
   }
 
@@ -106,6 +155,7 @@ public class BaiduFragment extends Fragment {
                 }, 1000);
                 textBaidu.setText(response.body().trans_result.get(0).dst);
                 linearTool.setVisibility(View.VISIBLE);
+                textBaidu.setVisibility(View.VISIBLE);
               }
 
               @Override public void onFailure(Call<BaiduResult> call, Throwable t) {

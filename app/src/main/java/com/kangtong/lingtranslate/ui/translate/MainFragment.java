@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +24,15 @@ public class MainFragment extends Fragment {
   @BindView(R.id.tab_layout) TabLayout tabLayout;
   @BindView(R.id.view_pager) ViewPager viewPager;
   Unbinder unbinder;
+  private int lastIndex = 0;
 
   public MainFragment() {
     // Required empty public constructor
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    viewPager.setCurrentItem(lastIndex, true);
   }
 
   @Override
@@ -37,6 +43,20 @@ public class MainFragment extends Fragment {
     unbinder = ButterKnife.bind(this, view);
     TranslatePagerAdapter translatePagerAdapter = new TranslatePagerAdapter(getFragmentManager());
     viewPager.setAdapter(translatePagerAdapter);
+    viewPager.setOffscreenPageLimit(translatePagerAdapter.getCount());
+    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+      @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+      }
+
+      @Override public void onPageSelected(int position) {
+        lastIndex = position; // 监听滑动到哪一个界面了
+      }
+
+      @Override public void onPageScrollStateChanged(int state) {
+
+      }
+    });
     tabLayout.setupWithViewPager(viewPager);
     return view;
   }
@@ -46,7 +66,7 @@ public class MainFragment extends Fragment {
     unbinder.unbind();
   }
 
-  private class TranslatePagerAdapter extends FragmentStatePagerAdapter {
+  private class TranslatePagerAdapter extends FragmentPagerAdapter { // 这个adapter可以保存view，不销毁
     private List<Fragment> fragmentList;
     private List<String> stringList;
 
