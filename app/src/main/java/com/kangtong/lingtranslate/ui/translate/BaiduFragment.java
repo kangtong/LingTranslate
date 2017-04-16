@@ -80,6 +80,9 @@ public class BaiduFragment extends Fragment {
         if (s.toString().isEmpty()) {
           linearTool.setVisibility(View.GONE);
           textBaidu.setVisibility(View.GONE);
+        } else {
+          btnBaiduFavorite.setFavorite(false);
+          textBaidu.setText("");
         }
       }
 
@@ -93,6 +96,11 @@ public class BaiduFragment extends Fragment {
           @Override
           public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
             if (favorite) {
+              if (textBaidu.getText().toString().isEmpty()) {
+                Toast.makeText(getContext(), "请先完成翻译~", Toast.LENGTH_SHORT).show();
+                btnBaiduFavorite.setFavorite(false);
+                return;
+              }
               WordDB bean = new WordDB(
                   editBaiduTranslate.getText().toString(),
                   spinnerFrom.getSelectedItem().toString(),
