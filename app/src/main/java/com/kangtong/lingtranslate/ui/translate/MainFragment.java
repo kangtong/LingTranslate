@@ -59,7 +59,7 @@ public class MainFragment extends Fragment {
       stringList.add("金山");
       fragmentList = new ArrayList<>();
       fragmentList.add(new TranslateFragment());
-      fragmentList.add(new TranslateFragment());
+      fragmentList.add(new YoudaoFragment());
       fragmentList.add(new BaiduFragment());
       fragmentList.add(new TranslateFragment());
     }
