@@ -8,9 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
@@ -31,14 +31,13 @@ public class YoudaoFragment extends Fragment {
 
   @BindView(R.id.edit_youdao_translate) EditText editYoudaoTranslate;
   @BindView(R.id.btn_youdao_favorite) MaterialFavoriteButton btnYoudaoFavorite;
-  @BindView(R.id.linear_tool) LinearLayout linearTool;
   @BindView(R.id.text_youdao) TextView textYoudao;
   @BindView(R.id.text_explains) TextView textExplains;
   @BindView(R.id.text_phonetic) TextView textPhonetic;
   @BindView(R.id.text_web) TextView textWeb;
-  @BindView(R.id.list_youdao) ListView listYoudao;
   @BindView(R.id.btn_youdao) CircularProgressButton btnYoudao;
   Unbinder unbinder;
+  @BindView(R.id.linear_content) LinearLayout linearContent;
 
   public YoudaoFragment() {
   }
@@ -79,7 +78,7 @@ public class YoudaoFragment extends Fragment {
         break;
       case R.id.btn_youdao_copy:
         ((ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setText(
-            editYoudaoTranslate.getText().toString());
+            textYoudao.getText());
         Toast.makeText(getContext(), "复制成功", Toast.LENGTH_LONG).show();
         break;
     }
@@ -102,18 +101,43 @@ public class YoudaoFragment extends Fragment {
                     }, 1000);
                   }
                 }, 1000);
+                linearContent.setVisibility(View.VISIBLE);
                 if (response.body().errorCode == 0) {
                   StringBuffer translation = new StringBuffer();
                   for (String translate :
                       response.body().translation) {
-                    translation.append(translate + "\n");
+                    translation.append(translate);
                   }
                   textYoudao.setText(translation);
-                  StringBuffer explain = new StringBuffer();
-                  for (String exp : response.body().basic.explains) {
-                    explain.append(exp + "\n");
+                  if (response.body().basic != null) {
+                    StringBuffer explain = new StringBuffer();
+                    for (String exp : response.body().basic.explains) {
+                      explain.append(exp + "\n");
+                    }
+                    textExplains.setText(explain);
+                    if (response.body().basic.ukphonetic == null) {
+                      textPhonetic.setVisibility(View.GONE);
+                    } else {
+                      textPhonetic.setVisibility(View.VISIBLE);
+                      textPhonetic.setText("英:"
+                          + response.body().basic.ukphonetic
+                          + "        "
+                          + "美:"
+                          + response.body().basic.usphonetic);
+                    }
                   }
-                  textExplains.setText(explain);
+
+                  if (response.body().web != null) {
+                    StringBuffer web = new StringBuffer();
+                    for (YoudaoResult.WebBean webBean : response.body().web) {
+                      web.append(webBean.key + ":\n");
+                      for (String w : webBean.value) {
+                        web.append(w + ";");
+                      }
+                      web.append("\n");
+                    }
+                    textWeb.setText(web);
+                  }
                 } else {
                 }
               }
@@ -122,5 +146,8 @@ public class YoudaoFragment extends Fragment {
                 btnYoudao.setProgress(-1);
               }
             });
+    ((InputMethodManager) getContext().getSystemService(
+        Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+        getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
   }
 }

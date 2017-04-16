@@ -184,7 +184,7 @@ public class BaiduFragment extends Fragment {
         break;
       case R.id.btn_baidu_copy:
         ((ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setText(
-            editBaiduTranslate.getText().toString());
+            textBaidu.getText());
         Toast.makeText(getContext(), "复制成功", Toast.LENGTH_LONG).show();
         break;
     }
