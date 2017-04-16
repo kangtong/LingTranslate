@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.kangtong.lingtranslate.model.db.WordDB;
@@ -17,7 +17,7 @@ import com.kangtong.lingtranslate.ui.translate.TranslateFragment;
 
 public class MainActivity extends AppCompatActivity implements
     TranslateFragment.OnFragmentInteractionListener,
-    WordNoteFragment.OnListFragmentInteractionListener {
+    WordNoteFragment.OnFragmentListener {
 
   private static final String KEY_Main = "Main";
   private static final String KEY_Note = "Note";
@@ -43,10 +43,6 @@ public class MainActivity extends AppCompatActivity implements
         .commit();
     currentPage = KEY_Main;
   }
-
-  // TODO: 2017/4/16 dengqi: 这里最后修改一下，记录上一个 fragment 是哪一个？ 以便恢复，
-
-  // TODO: 2017/4/16 dengqi: 结合上一个 todo，最好不要用replace，用 hide() + show()
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
       = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -100,7 +96,11 @@ public class MainActivity extends AppCompatActivity implements
 
   }
 
-  @Override public void onListFragmentInteraction(WordDB item) {
-    Log.d("dengqi", "点击了" + item.toString());
+  @Override public void onClickFragment(WordDB item) {
+    Toast.makeText(MainActivity.this, "单击了" + item.toString(), Toast.LENGTH_SHORT).show();
+  }
+
+  @Override public void onLongClickFragment(WordDB item) {
+    Toast.makeText(MainActivity.this, "长按了" + item.toString(), Toast.LENGTH_SHORT).show();
   }
 }

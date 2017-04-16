@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.kangtong.lingtranslate.R;
 import com.kangtong.lingtranslate.model.db.WordDB;
-import com.kangtong.lingtranslate.ui.notice.WordNoteFragment.OnListFragmentInteractionListener;
+import com.kangtong.lingtranslate.ui.notice.WordNoteFragment.OnFragmentListener;
 import java.util.List;
 import java.util.Locale;
 
@@ -15,9 +15,9 @@ public class WordNoteAdapter
     extends RecyclerView.Adapter<WordNoteAdapter.ViewHolder> {
 
   private final List<WordDB> mValues;
-  private final OnListFragmentInteractionListener mListener; // 单击事件
+  private final OnFragmentListener mListener; // 单击事件
 
-  public WordNoteAdapter(List<WordDB> items, OnListFragmentInteractionListener listener) {
+  public WordNoteAdapter(List<WordDB> items, OnFragmentListener listener) {
     mValues = items;
     mListener = listener;
   }
@@ -34,13 +34,21 @@ public class WordNoteAdapter
     // holder.mIdView.setText(mValues.get(position).getId().toString());
     holder.mIdView.setText(String.format(Locale.CHINA, "%d", position + 1));
     holder.mContentView.setText(mValues.get(position).src + " -> " + mValues.get(position).getDst());
-
+    // 单击事件
     holder.mView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+      @Override public void onClick(View v) {
         if (null != mListener) {
-          mListener.onListFragmentInteraction(holder.mItem);
+          mListener.onClickFragment(holder.mItem);
         }
+      }
+    });
+    // 长按事件
+    holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        if (null != mListener) {
+          mListener.onLongClickFragment(holder.mItem);
+        }
+        return true;
       }
     });
   }
