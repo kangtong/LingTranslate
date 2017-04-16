@@ -5,18 +5,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.kangtong.lingtranslate.ui.notice.ItemFragment;
-import com.kangtong.lingtranslate.ui.notice.dummy.DummyContent;
+import com.kangtong.lingtranslate.model.db.WordDB;
+import com.kangtong.lingtranslate.ui.notice.WordNoteFragment;
 import com.kangtong.lingtranslate.ui.translate.MainFragment;
 import com.kangtong.lingtranslate.ui.translate.TranslateFragment;
 
 public class MainActivity extends AppCompatActivity implements
     TranslateFragment.OnFragmentInteractionListener,
-    ItemFragment.OnListFragmentInteractionListener {
+    WordNoteFragment.OnListFragmentInteractionListener {
   @BindView(R.id.frame_container) FrameLayout frameContainer;
 
   @Override
@@ -31,6 +32,10 @@ public class MainActivity extends AppCompatActivity implements
         .commit();
   }
 
+  // TODO: 2017/4/16 dengqi: 这里最后修改一下，记录上一个 fragment 是哪一个？ 以便恢复，
+
+  // TODO: 2017/4/16 dengqi: 结合上一个 todo，最好不要用replace，用 hide() + show()
+
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
       = new BottomNavigationView.OnNavigationItemSelectedListener() {
     @Override
@@ -43,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
           return true;
         case R.id.navigation_dashboard:
           getSupportFragmentManager().beginTransaction()
-              .replace(R.id.frame_container, new ItemFragment())
+              .replace(R.id.frame_container, new WordNoteFragment())
               .commit();
           return true;
       }
@@ -55,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements
 
   }
 
-  @Override public void onListFragmentInteraction(DummyContent.DummyItem item) {
-
+  @Override public void onListFragmentInteraction(WordDB item) {
+    Log.d("dengqi", "点击了" + item.toString());
   }
 }

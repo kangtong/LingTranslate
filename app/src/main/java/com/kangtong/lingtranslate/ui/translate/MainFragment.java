@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +46,7 @@ public class MainFragment extends Fragment {
     unbinder.unbind();
   }
 
-  private class TranslatePagerAdapter extends FragmentStatePagerAdapter {
+  private class TranslatePagerAdapter extends FragmentPagerAdapter { // 这个adapter可以保存view，不销毁
     private List<Fragment> fragmentList;
     private List<String> stringList;
 

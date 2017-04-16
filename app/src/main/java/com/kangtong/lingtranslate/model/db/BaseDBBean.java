@@ -9,13 +9,4 @@ import org.litepal.crud.DataSupport;
  */
 public class BaseDBBean extends DataSupport {
 
-  protected int id;
-
-  public BaseDBBean(int id) {
-    this.id = id;
-  }
-
-  public int getId() {
-    return id;
-  }
 }

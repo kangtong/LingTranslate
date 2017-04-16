@@ -1,8 +1,12 @@
 package com.kangtong.lingtranslate;
 
 import android.database.sqlite.SQLiteDatabase;
+import com.kangtong.lingtranslate.model.db.WordDB;
+import java.util.List;
 import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
+import org.litepal.crud.DataSupport;
+import org.litepal.crud.callback.FindMultiCallback;
 
 /**
  * 作者：Create on 2017/4/16 00:42  by dq_dana
@@ -19,6 +23,9 @@ public class LingApplication extends LitePalApplication {
     initDB();
   }
 
+  /**
+   * 下面这一行，会自行添加所有的，已映射的表
+   */
   private void initDB() {
     SQLiteDatabase db = LitePal.getDatabase();
   }

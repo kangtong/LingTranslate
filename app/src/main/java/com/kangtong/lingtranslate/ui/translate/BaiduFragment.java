@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,9 @@ import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.kangtong.lingtranslate.R;
 import com.kangtong.lingtranslate.constant.Constant;
 import com.kangtong.lingtranslate.model.BaiduResult;
+import com.kangtong.lingtranslate.model.db.WordDB;
 import com.kangtong.lingtranslate.service.APIService;
+import com.kangtong.lingtranslate.util.DBUtils;
 import com.kangtong.lingtranslate.util.MD5;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,12 +69,43 @@ public class BaiduFragment extends Fragment {
             android.R.layout.simple_spinner_item);
     adapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spinnerTo.setAdapter(adapterTo);
+
+    // 需要做一个检查
+    editBaiduTranslate.addTextChangedListener(new TextWatcher() {
+      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+      }
+
+      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (s.toString().isEmpty()) {
+          linearTool.setVisibility(View.GONE);
+          textBaidu.setVisibility(View.GONE);
+        }
+      }
+
+      @Override public void afterTextChanged(Editable s) {
+
+      }
+    });
+
     btnBaiduFavorite.setOnFavoriteChangeListener(
         new MaterialFavoriteButton.OnFavoriteChangeListener() {
           @Override
           public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
             if (favorite) {
-              // TODO: 2017/4/15 收藏
+              WordDB bean = new WordDB(
+                  editBaiduTranslate.getText().toString(),
+                  spinnerFrom.getSelectedItem().toString(),
+                  textBaidu.getText().toString(),
+                  spinnerTo.getSelectedItem().toString(),
+                  WordDB.KEY_BAIDU);
+              if (DBUtils.addIntoNote(bean)) {
+                Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
+              } else {
+                Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+                // TODO: 2017/4/16 dengqi:  添加失败的话，这里应该把状态变回去，不知道下面这语句对不对 = =
+                btnBaiduFavorite.setFavorite(false);
+              }
             } else {
               // TODO: 2017/4/15 取消收藏
             }
@@ -106,6 +141,7 @@ public class BaiduFragment extends Fragment {
                 }, 1000);
                 textBaidu.setText(response.body().trans_result.get(0).dst);
                 linearTool.setVisibility(View.VISIBLE);
+                textBaidu.setVisibility(View.VISIBLE);
               }
 
               @Override public void onFailure(Call<BaiduResult> call, Throwable t) {

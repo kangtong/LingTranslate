@@ -1,5 +1,6 @@
 package com.kangtong.lingtranslate.model.db;
 
+import java.util.UUID;
 import org.litepal.annotation.Column;
 
 /**
@@ -9,21 +10,30 @@ import org.litepal.annotation.Column;
  */
 public class WordDB extends BaseDBBean {
 
-  // 我的设计如下： 源 - 语种 - 结果
-  @Column(unique = true, defaultValue = "unknown")
-  public String src;
-  public String lan;
-  public String dst;
+  public static final String KEY_BAIDU = "baidu";
+  public static final String KEY_YOUDAO = "youdao";
+  public static final String KEY_JINSHAN = "jinshan";
 
-  public WordDB(int id) {
-    super(id);
+  // 我的设计如下： 源 - 源语种 - 结果 - 结果语种 - 翻译工具类型
+  @Column(unique = true, defaultValue = "unknown")
+  public UUID id;
+  public String src;
+  public String srcLan;
+  public String dst;
+  public String dstLan;
+  public String type;
+
+  public WordDB(String src, String srcLan, String dst, String dstLan, String type) {
+    this.id = UUID.randomUUID();
+    this.src = src;
+    this.srcLan = srcLan;
+    this.dst = dst;
+    this.dstLan = dstLan;
+    this.type = type;
   }
 
-  public WordDB(int id, String src, String lan, String dst) {
-    super(id);
-    this.src = src;
-    this.lan = lan;
-    this.dst = dst;
+  public UUID getId() {
+    return id;
   }
 
   public String getSrc() {
@@ -34,12 +44,12 @@ public class WordDB extends BaseDBBean {
     this.src = src;
   }
 
-  public String getLan() {
-    return lan;
+  public String getSrcLan() {
+    return srcLan;
   }
 
-  public void setLan(String lan) {
-    this.lan = lan;
+  public void setSrcLan(String srcLan) {
+    this.srcLan = srcLan;
   }
 
   public String getDst() {
@@ -48,5 +58,32 @@ public class WordDB extends BaseDBBean {
 
   public void setDst(String dst) {
     this.dst = dst;
+  }
+
+  public String getDstLan() {
+    return dstLan;
+  }
+
+  public void setDstLan(String dstLan) {
+    this.dstLan = dstLan;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  @Override public String toString() {
+    return "WordDB{" +
+        "id=" + id +
+        ", src='" + src + '\'' +
+        ", srcLan='" + srcLan + '\'' +
+        ", dst='" + dst + '\'' +
+        ", dstLan='" + dstLan + '\'' +
+        ", type='" + type + '\'' +
+        '}';
   }
 }
