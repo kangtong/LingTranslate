@@ -14,6 +14,8 @@ import com.kangtong.lingtranslate.model.db.WordDB;
 import com.kangtong.lingtranslate.ui.notice.WordNoteFragment;
 import com.kangtong.lingtranslate.ui.translate.MainFragment;
 import com.kangtong.lingtranslate.ui.translate.TranslateFragment;
+import com.kangtong.lingtranslate.util.DBUtils;
+import com.kangtong.lingtranslate.util.DialogUtils;
 
 public class MainActivity extends AppCompatActivity implements
     TranslateFragment.OnFragmentInteractionListener,
@@ -98,9 +100,21 @@ public class MainActivity extends AppCompatActivity implements
 
   @Override public void onClickFragment(WordDB item) {
     Toast.makeText(MainActivity.this, "单击了" + item.toString(), Toast.LENGTH_SHORT).show();
+    // TODO: 2017/4/16 dengqi：这个点击跳转详情页，看你自己要怎么处理吧~ 
   }
 
-  @Override public void onLongClickFragment(WordDB item) {
-    Toast.makeText(MainActivity.this, "长按了" + item.toString(), Toast.LENGTH_SHORT).show();
+  @Override public void onLongClickFragment(final WordDB item) {
+    DialogUtils.showCommonDialog(MainActivity.this, "提示", "确定要移除改单词吗？", new DialogUtils.CommonCallbackWithCancel() {
+      @Override public void onPositive() {
+        if (DBUtils.deleteFromNote(item.getId())) {
+          Toast.makeText(MainActivity.this, "移除成功~", Toast.LENGTH_SHORT).show();
+        }
+        wordNoteFragment.onResume(); // 重新提取数据
+      }
+
+      @Override public void onNegative() {
+
+      }
+    });
   }
 }
