@@ -81,7 +81,7 @@ public class MainFragment extends Fragment {
       fragmentList.add(new TranslateFragment());
       fragmentList.add(new YoudaoFragment());
       fragmentList.add(new BaiduFragment());
-      fragmentList.add(new TranslateFragment());
+      fragmentList.add(new IcibaFragment());
     }
 
     @Override public Fragment getItem(int position) {

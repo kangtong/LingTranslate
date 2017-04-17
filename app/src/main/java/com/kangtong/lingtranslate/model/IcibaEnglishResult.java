@@ -26,13 +26,13 @@ public class IcibaEnglishResult extends IcibaResult {
      * word_est :
      */
 
-    public String word_er;
-    public String word_est;
-    public List<String> word_pl;
-    public List<String> word_third;
-    public List<String> word_past;
-    public List<String> word_done;
-    public List<String> word_ing;
+    public Object word_er;
+    public Object word_est;
+    public Object word_pl;
+    public Object word_third;
+    public Object word_past;
+    public Object word_done;
+    public Object word_ing;
   }
 
   public static class SymbolsBean {
@@ -42,7 +42,7 @@ public class IcibaEnglishResult extends IcibaResult {
      * ph_tts_mp3 : http://res-tts.iciba.com/3/d/d/3ddaeb82fbba964fb3461d4e4f1342eb.mp3 parts :
      * [{"part":"n.","means":["微笑，笑容"]},{"part":"vt.","means":["以微笑表示","以微笑完成"]},{"part":"vi.","means":["微笑","赞许","不在乎"]}]
      */
-
+    public String word_symbol;
     public String ph_en;
     public String ph_am;
     public String ph_other;
@@ -58,7 +58,19 @@ public class IcibaEnglishResult extends IcibaResult {
        */
 
       public String part;
-      public List<String> means;
+      public List<Object> means;
+
+      public static class MeansBean extends Object {
+        /**
+         * word_mean : smile
+         * has_mean : 1
+         * split : 1
+         */
+
+        public String word_mean;
+        public String has_mean;
+        public int split;
+      }
     }
   }
 }
