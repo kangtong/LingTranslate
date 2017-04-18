@@ -11,7 +11,7 @@
         android:orientation="vertical">
       <android.support.design.widget.TextInputLayout
           android:layout_width="match_parent"
-          android:layout_height="match_parent" android:layout_marginTop="10dp">
+          android:layout_height="match_parent" android:layout_margin="10dp">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,61 +19,180 @@
             android:minLines="4"
             android:gravity="top"/>
       </android.support.design.widget.TextInputLayout>
-      <Button
-          android:text="翻译"
+
+      <com.dd.CircularProgressButton
+          android:id="@+id/btn_translate"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content" android:id="@+id/btn_translate"
-          android:layout_weight="1"
-          android:background="@color/colorAccent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="20dp"
+          android:layout_marginRight="20dp"
+          android:layout_marginTop="10dp"
+          android:layout_marginBottom="10dp"
+          android:layout_gravity="center"
+          android:textColor="@android:color/white"
+          app:cpb_textIdle="翻译"
+          app:cpb_textComplete="成功"
+          app:cpb_textError="失败"
+          app:cpb_cornerRadius="40dp"
+          app:cpb_selectorIdle="@drawable/selector_circular_button"
       />
       <android.support.v7.widget.CardView
+          android:id="@+id/card_youdao"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content" android:id="@+id/cardview_youdao"
-          android:visibility="gone" android:padding="14dp"
-          android:layout_marginTop="12dp"
-          app:cardElevation="0dp">
+          android:layout_height="wrap_content"
+          android:layout_margin="10dp"
+          android:visibility="gone">
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+
+          >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="有道结果："
+            />
+            <ImageButton
+                android:id="@+id/btn_youdao_copy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_content_copy_black_24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btn_youdao_favorite"
+            />
+            <com.github.ivbaranov.mfb.MaterialFavoriteButton
+                android:id="@+id/btn_youdao_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+            />
+          </RelativeLayout>
+
           <TextView
+              android:id="@+id/text_youdao_translate"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:id="@+id/text_youdao_translate"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              android:layout_marginBottom="10dp"
               android:textSize="24sp"
-              tools:text="翻译内容"
+              android:textColor="@android:color/black"
           />
-          <TextView
-              android:id="@+id/text_youdao_us_phonetic"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"/>
-          <TextView
-              android:id="@+id/text_youdao_uk_phonetic"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"/>
-          <TextView
-              android:id="@+id/text_youdao_explains"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"/>
-
         </LinearLayout>
+
       </android.support.v7.widget.CardView>
       <android.support.v7.widget.CardView
+          android:id="@+id/card_baidu"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content" android:id="@+id/cardview_baidu"
-          android:visibility="gone" android:padding="14dp"
-          android:layout_marginTop="12dp"
-          app:cardElevation="0dp">
+          android:layout_height="wrap_content"
+          android:layout_margin="10dp"
+          android:visibility="gone">
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+
+          >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="百度结果："
+            />
+            <ImageButton
+                android:id="@+id/btn_baidu_copy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_content_copy_black_24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btn_baidu_favorite"
+            />
+            <com.github.ivbaranov.mfb.MaterialFavoriteButton
+                android:id="@+id/btn_baidu_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+            />
+          </RelativeLayout>
+
           <TextView
+              android:id="@+id/text_baidu_translate"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content" android:id="@+id/text_baidu_translate"
-              android:textSize="24sp"/>
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              android:layout_marginBottom="10dp"
+              android:textSize="24sp"
+              android:textColor="@android:color/black"
+          />
         </LinearLayout>
+
       </android.support.v7.widget.CardView>
+      <android.support.v7.widget.CardView
+          android:id="@+id/card_iciba"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_margin="10dp"
+          android:visibility="gone">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+
+          >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="金山结果："
+            />
+            <ImageButton
+                android:id="@+id/btn_iciba_copy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_content_copy_black_24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btn_iciba_favorite"
+            />
+            <com.github.ivbaranov.mfb.MaterialFavoriteButton
+                android:id="@+id/btn_iciba_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+            />
+          </RelativeLayout>
+
+          <TextView
+              android:id="@+id/text_iciba_translate"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              android:layout_marginBottom="10dp"
+              android:textSize="24sp"
+              android:textColor="@android:color/black"
+          />
+        </LinearLayout>
+
+      </android.support.v7.widget.CardView>
+
     </LinearLayout>
   </android.support.v4.widget.NestedScrollView>
 </FrameLayout>

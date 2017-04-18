@@ -1,26 +1,29 @@
 package com.kangtong.lingtranslate.ui.translate;
 
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import com.dd.CircularProgressButton;
+import com.github.ivbaranov.mfb.MaterialFavoriteButton;
+import com.google.gson.internal.LinkedTreeMap;
 import com.kangtong.lingtranslate.R;
 import com.kangtong.lingtranslate.constant.Constant;
 import com.kangtong.lingtranslate.model.BaiduResult;
-import com.kangtong.lingtranslate.model.IcibaChineseResult;
 import com.kangtong.lingtranslate.model.IcibaEnglishResult;
-import com.kangtong.lingtranslate.model.IcibaResult;
 import com.kangtong.lingtranslate.model.YoudaoResult;
 import com.kangtong.lingtranslate.service.APIService;
 import com.kangtong.lingtranslate.util.MD5;
@@ -41,14 +44,21 @@ public class TranslateFragment extends Fragment {
   private static final String ARG_PARAM1 = "param1";
   private static final String ARG_PARAM2 = "param2";
   @BindView(R.id.edit_translate) EditText editTranslate;
-  @BindView(R.id.cardview_youdao) CardView cardviewYoudao;
   Unbinder unbinder;
   @BindView(R.id.text_youdao_translate) TextView textYoudaoTranslate;
-  @BindView(R.id.text_youdao_us_phonetic) TextView textYoudaoUsPhonetic;
-  @BindView(R.id.text_youdao_uk_phonetic) TextView textYoudaoUkPhonetic;
-  @BindView(R.id.text_youdao_explains) TextView textYoudaoExplains;
+  @BindView(R.id.btn_translate) CircularProgressButton btnTranslate;
+  @BindView(R.id.card_youdao) CardView cardYoudao;
+  @BindView(R.id.btn_youdao_copy) ImageButton btnYoudaoCopy;
+  @BindView(R.id.btn_youdao_favorite) MaterialFavoriteButton btnYoudaoFavorite;
+  @BindView(R.id.btn_baidu_copy) ImageButton btnBaiduCopy;
+  @BindView(R.id.btn_baidu_favorite) MaterialFavoriteButton btnBaiduFavorite;
   @BindView(R.id.text_baidu_translate) TextView textBaiduTranslate;
-  @BindView(R.id.cardview_baidu) CardView cardviewBaidu;
+  @BindView(R.id.card_baidu) CardView cardBaidu;
+  @BindView(R.id.btn_iciba_copy) ImageButton btnIcibaCopy;
+  @BindView(R.id.btn_iciba_favorite) MaterialFavoriteButton btnIcibaFavorite;
+  @BindView(R.id.text_iciba_translate) TextView textIcibaTranslate;
+  @BindView(R.id.card_iciba) CardView cardIciba;
+  //@BindView(R.id.text_baidu_translate) TextView textBaiduTranslate;
 
   private String mParam1;
   private String mParam2;
@@ -122,10 +132,30 @@ public class TranslateFragment extends Fragment {
     unbinder.unbind();
   }
 
-  @OnClick(R.id.btn_translate) public void onViewClicked() {
-    Youdao(editTranslate.getText().toString());
-    Baidu(editTranslate.getText().toString());
-    Iciba(editTranslate.getText().toString());
+  @OnClick({R.id.btn_translate, R.id.btn_youdao_copy, R.id.btn_baidu_copy, R.id.btn_iciba_copy})
+  public void onViewClicked(View view) {
+    switch (view.getId()) {
+      case R.id.btn_translate:
+        Youdao(editTranslate.getText().toString());
+        Iciba(editTranslate.getText().toString());
+        Baidu(editTranslate.getText().toString());
+        break;
+      case R.id.btn_youdao_copy:
+        ((ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setText(
+            textYoudaoTranslate.getText());
+        Toast.makeText(getContext(), "复制成功", Toast.LENGTH_LONG).show();
+        break;
+      case R.id.btn_baidu_copy:
+        ((ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setText(
+            textBaiduTranslate.getText());
+        Toast.makeText(getContext(), "复制成功", Toast.LENGTH_LONG).show();
+        break;
+      case R.id.btn_iciba_copy:
+        ((ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setText(
+            textIcibaTranslate.getText());
+        Toast.makeText(getContext(), "复制成功", Toast.LENGTH_LONG).show();
+        break;
+    }
   }
 
   public interface OnFragmentInteractionListener {
@@ -140,7 +170,7 @@ public class TranslateFragment extends Fragment {
               @Override
               public void onResponse(Call<YoudaoResult> call, Response<YoudaoResult> response) {
                 if (response.body().errorCode == 0) {
-                  cardviewYoudao.setVisibility(View.VISIBLE);
+                  cardYoudao.setVisibility(View.VISIBLE);
                   StringBuffer translate = new StringBuffer();
                   for (String trans :
                       response.body().translation) {
@@ -149,12 +179,12 @@ public class TranslateFragment extends Fragment {
                   }
                   textYoudaoTranslate.setText(translate);
                 } else {
-                  cardviewYoudao.setVisibility(View.GONE);
+                  cardYoudao.setVisibility(View.GONE);
                 }
               }
 
               @Override public void onFailure(Call<YoudaoResult> call, Throwable t) {
-                cardviewYoudao.setVisibility(View.GONE);
+                cardYoudao.setVisibility(View.GONE);
               }
             });
   }
@@ -177,7 +207,7 @@ public class TranslateFragment extends Fragment {
                             @Override
                             public void onResponse(Call<BaiduResult> call,
                                 Response<BaiduResult> response) {
-                              cardviewBaidu.setVisibility(View.VISIBLE);
+                              cardBaidu.setVisibility(View.VISIBLE);
                               textBaiduTranslate.setText(response.body().trans_result.get(0).dst);
                             }
 
@@ -186,53 +216,55 @@ public class TranslateFragment extends Fragment {
                             }
                           });
                 } else {
-                  cardviewBaidu.setVisibility(View.VISIBLE);
+                  cardBaidu.setVisibility(View.VISIBLE);
                   textBaiduTranslate.setText(response.body().trans_result.get(0).dst);
                 }
               }
 
               @Override public void onFailure(Call<BaiduResult> call, Throwable t) {
-                cardviewBaidu.setVisibility(View.GONE);
+                cardBaidu.setVisibility(View.GONE);
               }
             });
   }
 
   private void Iciba(final String text) {
-    APIService.icibaService().getIciba(text, Constant.ICBC_KEY, "json").enqueue(
-        new Callback<IcibaResult>() {
-          @Override public void onResponse(Call<IcibaResult> call, Response<IcibaResult> response) {
-            if (response.body().is_CRI == null) {
-              APIService.icibaService().getChineseIciba(text, Constant.ICBC_KEY, "json").enqueue(
-                  new Callback<IcibaChineseResult>() {
-                    @Override
-                    public void onResponse(Call<IcibaChineseResult> call,
-                        Response<IcibaChineseResult> response) {
-                      Log.d("iciba", "chinese" + response.body().word_name);
-                    }
 
-                    @Override public void onFailure(Call<IcibaChineseResult> call, Throwable t) {
-
-                    }
-                  });
-            } else {
               APIService.icibaService().getEnglishIciba(text, Constant.ICBC_KEY, "json").enqueue(
                   new Callback<IcibaEnglishResult>() {
                     @Override
                     public void onResponse(Call<IcibaEnglishResult> call,
                         Response<IcibaEnglishResult> response) {
-                      Log.d("iciba", "english" + response.body().word_name);
+                      if (response.body().word_name != null) {
+                        cardIciba.setVisibility(View.VISIBLE);
+                        StringBuffer explains = new StringBuffer();
+                        if (response.body().symbols.get(0).parts.get(0).means.get(
+                            0) instanceof String) {
+                          for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
+                              response.body().symbols.get(0).parts) {
+                            explains.append(parts.part + " ");
+                            for (Object s :
+                                parts.means) {
+                              explains.append(s + ";");
+                            }
+                            explains.append("\n");
+                          }
+                        } else {
+                          for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
+                              response.body().symbols.get(0).parts) {
+                            for (Object s :
+                                parts.means) {
+                              explains.append(
+                                  ((LinkedTreeMap) s).get("word_mean").toString() + "\n");
+                            }
+                          }
+                        }
+                        textIcibaTranslate.setText(explains);
+                      }
                     }
 
                     @Override public void onFailure(Call<IcibaEnglishResult> call, Throwable t) {
-
+                      cardIciba.setVisibility(View.GONE);
                     }
                   });
             }
-          }
-
-          @Override public void onFailure(Call<IcibaResult> call, Throwable t) {
-
-          }
-        });
-  }
 }
