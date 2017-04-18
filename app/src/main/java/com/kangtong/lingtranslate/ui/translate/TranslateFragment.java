@@ -9,6 +9,7 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -139,6 +140,9 @@ public class TranslateFragment extends Fragment {
         Youdao(editTranslate.getText().toString());
         Iciba(editTranslate.getText().toString());
         Baidu(editTranslate.getText().toString());
+        ((InputMethodManager) getContext().getSystemService(
+            Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+            getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         break;
       case R.id.btn_youdao_copy:
         ((ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setText(
