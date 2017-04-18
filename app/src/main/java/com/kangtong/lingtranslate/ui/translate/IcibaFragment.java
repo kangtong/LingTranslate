@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.kangtong.lingtranslate.constant.Constant;
 import com.kangtong.lingtranslate.model.IcibaEnglishResult;
 import com.kangtong.lingtranslate.service.APIService;
 import com.kangtong.lingtranslate.service.IcibaService;
+import com.kangtong.lingtranslate.util.Player;
 import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,12 +44,21 @@ public class IcibaFragment extends Fragment {
   Unbinder unbinder;
   boolean is_chinese;
   IcibaService icibaService;
+  @BindView(R.id.btn_iciba_phonetic) ImageButton btnIcibaPhonetic;
+  @BindView(R.id.btn_iciba_uk_phonetic) ImageButton btnIcibaUkPhonetic;
+  @BindView(R.id.btn_iciba_us_phonetic) ImageButton btnIcibaUsPhonetic;
+  String phonetic;
+  String ukPhonetic;
+  String usPhonetic;
+  @BindView(R.id.text_us_phonetic) TextView textUsPhonetic;
+  private Player player;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_iciba, container, false);
     unbinder = ButterKnife.bind(this, view);
+    player = new Player();
     icibaService = APIService.icibaService();
     return view;
   }
@@ -57,7 +68,9 @@ public class IcibaFragment extends Fragment {
     unbinder.unbind();
   }
 
-  @OnClick({R.id.btn_iciba, R.id.btn_iciba_copy}) public void onViewClicked(View view) {
+  @OnClick({R.id.btn_iciba, R.id.btn_iciba_copy, R.id.btn_iciba_phonetic,
+      R.id.btn_iciba_uk_phonetic, R.id.btn_iciba_us_phonetic})
+  public void onViewClicked(View view) {
     switch (view.getId()) {
       case R.id.btn_iciba:
         if (!editIcibaTranslate.getText().toString().isEmpty()) {
@@ -71,6 +84,15 @@ public class IcibaFragment extends Fragment {
         ((ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setText(
             textExplains.getText());
         Toast.makeText(getContext(), "复制成功", Toast.LENGTH_LONG).show();
+        break;
+      case R.id.btn_iciba_phonetic:
+        player.playUrl(phonetic);
+        break;
+      case R.id.btn_iciba_uk_phonetic:
+        player.playUrl(ukPhonetic);
+        break;
+      case R.id.btn_iciba_us_phonetic:
+        player.playUrl(usPhonetic);
         break;
     }
   }
@@ -106,62 +128,80 @@ public class IcibaFragment extends Fragment {
   }
 
   private void icibaEnglish(IcibaEnglishResult result) {
-    linearContent.setVisibility(View.VISIBLE);
-    StringBuffer explains = new StringBuffer();
 
-    if (result.symbols.get(0).parts.get(0).means.get(0) instanceof String) {
-      for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
-          result.symbols.get(0).parts) {
-        explains.append(parts.part + " ");
-        for (Object s :
-            parts.means) {
-          explains.append(s + ";");
+    if (result.word_name != null) {
+      linearContent.setVisibility(View.VISIBLE);
+      StringBuffer explains = new StringBuffer();
+      if (result.symbols.get(0).parts.get(0).means.get(0) instanceof String) {
+        for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
+            result.symbols.get(0).parts) {
+          explains.append(parts.part + " ");
+          for (Object s :
+              parts.means) {
+            explains.append(s + ";");
+          }
+          explains.append("\n");
         }
-        explains.append("\n");
-      }
-    } else {
-      for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
-          result.symbols.get(0).parts) {
-        for (Object s :
-            parts.means) {
-          explains.append(((LinkedTreeMap) s).get("word_mean").toString() + "\n");
+      } else {
+        for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
+            result.symbols.get(0).parts) {
+          for (Object s :
+              parts.means) {
+            explains.append(((LinkedTreeMap) s).get("word_mean").toString() + "\n");
+          }
         }
       }
-    }
-    textExplains.setText(explains);
-    if (result.symbols.get(0).word_symbol != null) {
-      textPhonetic.setText(result.symbols.get(0).word_symbol);
-    } else if (result.symbols.get(0).ph_en != null || !result.symbols.get(0).ph_en.isEmpty()) {
-      textPhonetic.setText("英："
-          + result.symbols.get(0).ph_en
-          + "      "
-          + "美："
-          + result.symbols.get(0).ph_am);
-    }
-    if (result.is_CRI.equals("1")) {
-      StringBuffer exchange = new StringBuffer();
-      if (result.exchange.word_pl instanceof ArrayList) {
-        exchange.append("\n复数：" + ((ArrayList<String>) result.exchange.word_pl).get(0));
+      textExplains.setText(explains);
+      if (result.symbols.get(0).word_symbol != null) {
+        textPhonetic.setText(result.symbols.get(0).word_symbol);
+      } else if (result.symbols.get(0).ph_en != null || !result.symbols.get(0).ph_en.isEmpty()) {
+        textPhonetic.setText("英："
+            + result.symbols.get(0).ph_en);
+        textUsPhonetic.setText("美：" + result.symbols.get(0).ph_am);
       }
-      if (result.exchange.word_third instanceof ArrayList) {
-        exchange.append("\n第三人称：" + ((ArrayList<String>) result.exchange.word_third).get(0));
+      if (result.is_CRI.equals("1")) {
+        StringBuffer exchange = new StringBuffer();
+        if (result.exchange.word_pl instanceof ArrayList) {
+          exchange.append("\n复数：" + ((ArrayList<String>) result.exchange.word_pl).get(0));
+        }
+        if (result.exchange.word_third instanceof ArrayList) {
+          exchange.append("\n第三人称：" + ((ArrayList<String>) result.exchange.word_third).get(0));
+        }
+        if (result.exchange.word_past instanceof ArrayList) {
+          exchange.append("\n过去时：" + ((ArrayList<String>) result.exchange.word_past).get(0));
+        }
+        if (result.exchange.word_done instanceof ArrayList) {
+          exchange.append("\n完成时：" + ((ArrayList<String>) result.exchange.word_done).get(0));
+        }
+        if (result.exchange.word_ing instanceof ArrayList) {
+          exchange.append("\n进行时：" + ((ArrayList<String>) result.exchange.word_ing).get(0));
+        }
+        if (result.exchange.word_er instanceof ArrayList) {
+          exchange.append("\n比较级：" + ((ArrayList<String>) result.exchange.word_er).get(0));
+        }
+        if (result.exchange.word_est instanceof ArrayList) {
+          exchange.append("\n最高级：" + ((ArrayList<String>) result.exchange.word_est).get(0));
+        }
+        textExchange.setText(exchange);
       }
-      if (result.exchange.word_past instanceof ArrayList) {
-        exchange.append("\n过去时：" + ((ArrayList<String>) result.exchange.word_past).get(0));
+      if (!result.symbols.get(0).ph_am_mp3.isEmpty()) {
+        btnIcibaUsPhonetic.setVisibility(View.VISIBLE);
+        usPhonetic = result.symbols.get(0).ph_am_mp3;
+      } else {
+        btnIcibaUsPhonetic.setVisibility(View.GONE);
       }
-      if (result.exchange.word_done instanceof ArrayList) {
-        exchange.append("\n完成时：" + ((ArrayList<String>) result.exchange.word_done).get(0));
+      if (!result.symbols.get(0).ph_en_mp3.isEmpty()) {
+        btnIcibaUkPhonetic.setVisibility(View.VISIBLE);
+        ukPhonetic = result.symbols.get(0).ph_en_mp3;
+      } else {
+        btnIcibaUkPhonetic.setVisibility(View.GONE);
       }
-      if (result.exchange.word_ing instanceof ArrayList) {
-        exchange.append("\n进行时：" + ((ArrayList<String>) result.exchange.word_ing).get(0));
+      if (!result.symbols.get(0).ph_tts_mp3.isEmpty()) {
+        btnIcibaPhonetic.setVisibility(View.VISIBLE);
+        phonetic = result.symbols.get(0).ph_tts_mp3;
+      } else {
+        btnIcibaPhonetic.setVisibility(View.GONE);
       }
-      if (result.exchange.word_er instanceof ArrayList) {
-        exchange.append("\n比较级：" + ((ArrayList<String>) result.exchange.word_er).get(0));
-      }
-      if (result.exchange.word_est instanceof ArrayList) {
-        exchange.append("\n最高级：" + ((ArrayList<String>) result.exchange.word_est).get(0));
-      }
-      textExchange.setText(exchange);
     }
   }
 }
