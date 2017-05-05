@@ -14,16 +14,12 @@ public class WordDB extends BaseDBBean {
   // 我的设计如下： 源 - 源语种 - 结果 - 结果语种 - 翻译工具类型
   public int id;
   public String src;
-  public String srcLan;
   public String dst;
-  public String dstLan;
   public String type;
 
-  public WordDB(String src, String srcLan, String dst, String dstLan, String type) {
+  public WordDB(String src, String dst, String type) {
     this.src = src;
-    this.srcLan = srcLan;
     this.dst = dst;
-    this.dstLan = dstLan;
     this.type = type;
   }
 
@@ -39,14 +35,6 @@ public class WordDB extends BaseDBBean {
     this.src = src;
   }
 
-  public String getSrcLan() {
-    return srcLan;
-  }
-
-  public void setSrcLan(String srcLan) {
-    this.srcLan = srcLan;
-  }
-
   public String getDst() {
     return dst;
   }
@@ -55,30 +43,11 @@ public class WordDB extends BaseDBBean {
     this.dst = dst;
   }
 
-  public String getDstLan() {
-    return dstLan;
-  }
-
-  public void setDstLan(String dstLan) {
-    this.dstLan = dstLan;
-  }
-
   public String getType() {
     return type;
   }
 
   public void setType(String type) {
     this.type = type;
-  }
-
-  @Override public String toString() {
-    return "WordDB{" +
-        "id=" + id +
-        ", src='" + src + '\'' +
-        ", srcLan='" + srcLan + '\'' +
-        ", dst='" + dst + '\'' +
-        ", dstLan='" + dstLan + '\'' +
-        ", type='" + type + '\'' +
-        '}';
   }
 }

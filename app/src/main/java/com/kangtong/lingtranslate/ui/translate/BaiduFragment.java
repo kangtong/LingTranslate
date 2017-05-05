@@ -103,9 +103,7 @@ public class BaiduFragment extends Fragment {
           }
           bean = new WordDB(
               editBaiduTranslate.getText().toString(),
-              spinnerFrom.getSelectedItem().toString(),
               textBaidu.getText().toString(),
-              spinnerTo.getSelectedItem().toString(),
               WordDB.KEY_BAIDU);
           if (DBUtils.insertIntoNote(bean)) {
             Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
