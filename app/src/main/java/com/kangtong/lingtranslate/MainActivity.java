@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.Window;
@@ -15,6 +16,7 @@ import com.kangtong.lingtranslate.model.db.WordDB;
 import com.kangtong.lingtranslate.ui.notice.WordNoteFragment;
 import com.kangtong.lingtranslate.ui.translate.MainFragment;
 import com.kangtong.lingtranslate.ui.translate.TranslateFragment;
+import com.kangtong.lingtranslate.ui.user.LoginFragment;
 import com.kangtong.lingtranslate.util.DBUtils;
 import com.kangtong.lingtranslate.util.DialogUtils;
 
@@ -24,10 +26,11 @@ public class MainActivity extends AppCompatActivity implements
 
   private static final String KEY_Main = "Main";
   private static final String KEY_Note = "Note";
-
+  private static final String KEY_Login = "Login";
   private String currentPage;
   private MainFragment mainFragment;
   private WordNoteFragment wordNoteFragment;
+  private LoginFragment loginFragment;
 
   @BindView(R.id.frame_container) FrameLayout frameContainer;
 
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements
           }
           if (mainFragment.isAdded()) {
             getSupportFragmentManager().beginTransaction()
-                .hide(wordNoteFragment).show(mainFragment)
+                .hide(getFragment(currentPage)).show(mainFragment)
                 .commit();
           } else {
             getSupportFragmentManager().beginTransaction()
@@ -79,16 +82,36 @@ public class MainActivity extends AppCompatActivity implements
           }
           if (wordNoteFragment.isAdded()) {
             getSupportFragmentManager().beginTransaction()
-                .hide(mainFragment).show(wordNoteFragment)
+                .hide(getFragment(currentPage)).show(wordNoteFragment)
                 .commit();
           } else {
             getSupportFragmentManager().beginTransaction()
-                .hide(mainFragment) // 这个一定是已经在加载了的
+                .hide(getFragment(currentPage))
                 .add(R.id.frame_container, wordNoteFragment, KEY_Note)
                 .commit();
           }
           wordNoteFragment.onResume(); // 重新提取数据
           currentPage = KEY_Note;
+          return true;
+        case R.id.navigation_login:
+          if (currentPage.equals(KEY_Login)) {
+            return true;
+          }
+          if (loginFragment == null) {
+            loginFragment = new LoginFragment();
+          }
+          if (loginFragment.isAdded()) {
+            getSupportFragmentManager().beginTransaction()
+                .hide(getFragment(currentPage)).show(loginFragment)
+                .commit();
+          } else {
+            getSupportFragmentManager().beginTransaction()
+                .hide(getFragment(currentPage))
+                .add(R.id.frame_container, loginFragment, KEY_Login)
+                .commit();
+          }
+          loginFragment.onResume(); // 重新提取数据
+          currentPage = KEY_Login;
           return true;
       }
       return false;
@@ -117,5 +140,17 @@ public class MainActivity extends AppCompatActivity implements
 
       }
     });
+  }
+
+  public Fragment getFragment(String current) {
+    switch (current) {
+      case KEY_Login:
+        return loginFragment;
+      case KEY_Main:
+        return mainFragment;
+      case KEY_Note:
+        return wordNoteFragment;
+    }
+    return mainFragment;
   }
 }
