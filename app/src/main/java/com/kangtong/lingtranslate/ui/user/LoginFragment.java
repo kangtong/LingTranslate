@@ -1,6 +1,7 @@
 package com.kangtong.lingtranslate.ui.user;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,11 +13,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import com.kangtong.lingtranslate.MainActivity;
 import com.kangtong.lingtranslate.R;
+import com.kangtong.lingtranslate.model.UserLogin;
+import com.kangtong.lingtranslate.service.APIService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,11 +61,37 @@ public class LoginFragment extends Fragment {
   @OnClick({R.id.login_in_button, R.id.sign_in_button}) public void onViewClicked(View view) {
     switch (view.getId()) {
       case R.id.login_in_button:
+        login();
         break;
       case R.id.sign_in_button:
         Intent intent = new Intent(getActivity(), RegisterActivity.class);
         getActivity().startActivity(intent);
         break;
     }
+  }
+
+  private void login() {
+    APIService.loginService()
+        .getLogin("1d9d9c0ffa39e", username.getText().toString(), password.getText().toString())
+        .enqueue(
+            new Callback<UserLogin>() {
+              @Override public void onResponse(Call<UserLogin> call, Response<UserLogin> response) {
+                if (response.body().retCode.equals("200")) {
+                  Toast.makeText(getActivity(), "登陆成功", Toast.LENGTH_SHORT).show();
+                  SharedPreferences login = getActivity().getSharedPreferences("login", 0);
+                  SharedPreferences.Editor editor = login.edit();
+                  editor.putString("name", username.getText().toString());
+                  editor.putString("uuid", response.body().result.uid);
+                  editor.apply();
+                  ((MainActivity) getActivity()).loginSuccess(true);
+                } else {
+                  Toast.makeText(getActivity(), "登录失败，请核对用户信息", Toast.LENGTH_SHORT).show();
+                }
+              }
+
+              @Override public void onFailure(Call<UserLogin> call, Throwable t) {
+                Toast.makeText(getActivity(), "网络连接错误", Toast.LENGTH_SHORT).show();
+              }
+            });
   }
 }

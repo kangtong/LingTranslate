@@ -1,5 +1,6 @@
 package com.kangtong.lingtranslate;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,11 +13,13 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.Bmob;
 import com.kangtong.lingtranslate.model.db.WordDB;
 import com.kangtong.lingtranslate.ui.notice.WordNoteFragment;
 import com.kangtong.lingtranslate.ui.translate.MainFragment;
 import com.kangtong.lingtranslate.ui.translate.TranslateFragment;
 import com.kangtong.lingtranslate.ui.user.LoginFragment;
+import com.kangtong.lingtranslate.ui.user.UserFragment;
 import com.kangtong.lingtranslate.util.DBUtils;
 import com.kangtong.lingtranslate.util.DialogUtils;
 
@@ -30,7 +33,8 @@ public class MainActivity extends AppCompatActivity implements
   private String currentPage;
   private MainFragment mainFragment;
   private WordNoteFragment wordNoteFragment;
-  private LoginFragment loginFragment;
+  private Fragment loginFragment;
+  private String username = "";
 
   @BindView(R.id.frame_container) FrameLayout frameContainer;
 
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements
         .add(R.id.frame_container, mainFragment, KEY_Main)
         .commit();
     currentPage = KEY_Main;
+    SharedPreferences login = getSharedPreferences("login", 0);
+    username = login.getString("name", "");
+    Bmob.initialize(this, "0b90ccaed35809af5a8fc2f7ab2221a2");
   }
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -98,7 +105,11 @@ public class MainActivity extends AppCompatActivity implements
             return true;
           }
           if (loginFragment == null) {
-            loginFragment = new LoginFragment();
+            if (username.isEmpty()) {
+              loginFragment = new LoginFragment();
+            } else {
+              loginFragment = new UserFragment();
+            }
           }
           if (loginFragment.isAdded()) {
             getSupportFragmentManager().beginTransaction()
@@ -112,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements
           }
           loginFragment.onResume(); // 重新提取数据
           currentPage = KEY_Login;
+
+
           return true;
       }
       return false;
@@ -152,5 +165,28 @@ public class MainActivity extends AppCompatActivity implements
         return wordNoteFragment;
     }
     return mainFragment;
+  }
+
+  public void loginSuccess(Boolean b) {
+    if (mainFragment == null) {
+      mainFragment = new MainFragment();
+    }
+    if (mainFragment.isAdded()) {
+      getSupportFragmentManager().beginTransaction()
+          .hide(getFragment(currentPage)).show(mainFragment)
+          .commit();
+    } else {
+      getSupportFragmentManager().beginTransaction()
+          .add(R.id.frame_container, mainFragment, KEY_Main)
+          .commit();
+    }
+    currentPage = KEY_Main;
+    loginFragment.onDestroy();
+
+    if (b) {
+      loginFragment = new UserFragment();
+    } else {
+      loginFragment = new LoginFragment();
+    }
   }
 }

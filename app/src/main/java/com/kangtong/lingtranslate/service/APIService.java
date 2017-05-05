@@ -37,4 +37,14 @@ public class APIService {
   public static IcibaService icibaService() {
     return icibaRetrofit().create(IcibaService.class);
   }
+
+  private static Retrofit mobRetrofit() {
+    return new Retrofit.Builder().baseUrl("http://apicloud.mob.com/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build();
+  }
+
+  public static LoginService loginService() {
+    return mobRetrofit().create(LoginService.class);
+  }
 }

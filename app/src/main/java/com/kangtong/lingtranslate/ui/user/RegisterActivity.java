@@ -3,6 +3,7 @@ package com.kangtong.lingtranslate.ui.user;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -25,10 +26,21 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.kangtong.lingtranslate.R;
+import com.kangtong.lingtranslate.model.UserRegister;
+import com.kangtong.lingtranslate.service.APIService;
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -49,6 +61,11 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
   private static final String[] DUMMY_CREDENTIALS = new String[] {
       "foo@example.com:hello", "bar@example.com:world"
   };
+  @BindView(R.id.login_progress) ProgressBar loginProgress;
+  @BindView(R.id.username) EditText username;
+  @BindView(R.id.register_button) Button registerButton;
+  @BindView(R.id.email_login_form) LinearLayout emailLoginForm;
+  @BindView(R.id.login_form) ScrollView loginForm;
   /**
    * Keep track of the login task to ensure we can cancel it if requested.
    */
@@ -64,6 +81,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_register);
+    ButterKnife.bind(this);
     setupActionBar();
     // Set up the login form.
     mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -110,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     }
     if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
       Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-          .setAction(android.R.string.ok, new View.OnClickListener() {
+          .setAction(android.R.string.ok, new OnClickListener() {
             @Override
             @TargetApi(Build.VERSION_CODES.M)
             public void onClick(View v) {
@@ -137,7 +155,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
   }
 
   /**
-   * Set up the {@link android.app.ActionBar}, if the API is available.
+   * Set up the {@link ActionBar}, if the API is available.
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void setupActionBar() {
@@ -197,6 +215,21 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
       mAuthTask = new UserLoginTask(email, password);
       mAuthTask.execute((Void) null);
     }
+    APIService.loginService()
+        .getRegister("1d9d9c0ffa39e", username.getText().toString(), password, email)
+        .enqueue(new Callback<UserRegister>() {
+          @Override
+          public void onResponse(Call<UserRegister> call, Response<UserRegister> response) {
+            if (response.body().retCode.equals("200")) {
+              Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+              onBackPressed();
+            }
+          }
+
+          @Override public void onFailure(Call<UserRegister> call, Throwable t) {
+            Toast.makeText(RegisterActivity.this, "获取网络失败", Toast.LENGTH_SHORT).show();
+          }
+        });
   }
 
   private boolean isEmailValid(String email) {
