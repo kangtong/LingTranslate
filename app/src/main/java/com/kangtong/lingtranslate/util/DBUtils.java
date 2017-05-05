@@ -29,4 +29,8 @@ public class DBUtils {
   public static boolean deleteFromNote(int id) {
     return (DataSupport.delete(WordDB.class, id) != 0);
   }
+
+  public static int deleteAll() {
+    return (DataSupport.deleteAll(WordDB.class));
+  }
 }

@@ -24,6 +24,7 @@ import com.kangtong.lingtranslate.MainActivity;
 import com.kangtong.lingtranslate.R;
 import com.kangtong.lingtranslate.model.WordBmob;
 import com.kangtong.lingtranslate.model.db.WordDB;
+import com.kangtong.lingtranslate.util.DBUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.litepal.crud.DataSupport;
@@ -64,6 +65,7 @@ public class UserFragment extends Fragment {
   public void onViewClicked(View view) {
     switch (view.getId()) {
       case R.id.btn_download:
+        download();
         break;
       case R.id.btn_upload:
         update();
@@ -135,6 +137,22 @@ public class UserFragment extends Fragment {
   }
 
   private void download() {
-
+    BmobQuery<WordBmob> query = new BmobQuery<WordBmob>();
+    query.addWhereEqualTo("uuid", username);
+    query.setLimit(50);
+    query.findObjects(new FindListener<WordBmob>() {
+      @Override public void done(List<WordBmob> list, BmobException e) {
+        if (e == null) {
+          DBUtils.deleteAll();
+          for (WordBmob word :
+              list) {
+            DBUtils.insertIntoNote(new WordDB(word.getSrc(), word.getDst(), word.getType()));
+          }
+          Toast.makeText(getActivity(), "数据下载成功", Toast.LENGTH_SHORT).show();
+        } else {
+          Toast.makeText(getActivity(), "数据下载失败，请检查网络连接", Toast.LENGTH_SHORT).show();
+        }
+      }
+    });
   }
 }
