@@ -97,9 +97,9 @@ public class IcibaFragment extends Fragment {
               }
               bean = new WordDB(
                   editIcibaTranslate.getText().toString(),
-                  "",
+
                   textExplains.getText().toString(),
-                  "",
+
                   WordDB.KEY_JINSHAN
               );
               if (DBUtils.insertIntoNote(bean)) {

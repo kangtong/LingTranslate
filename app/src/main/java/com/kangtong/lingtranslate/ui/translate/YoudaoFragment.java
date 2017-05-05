@@ -80,8 +80,8 @@ public class YoudaoFragment extends Fragment {
                 btnYoudaoFavorite.setFavorite(false);
                 return;
               }
-              bean = new WordDB(editYoudaoTranslate.getText().toString(), "",
-                  textYoudao.getText().toString(), "", WordDB.KEY_YOUDAO);
+              bean = new WordDB(editYoudaoTranslate.getText().toString(),
+                  textYoudao.getText().toString(), WordDB.KEY_YOUDAO);
               if (DBUtils.insertIntoNote(bean)) {
                 Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
               } else {

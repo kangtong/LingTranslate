@@ -117,9 +117,9 @@ public class TranslateFragment extends Fragment {
               }
               bean = new WordDB(
                   editTranslate.getText().toString(),
-                  "",
+
                   textBaiduTranslate.getText().toString(),
-                  "",
+
                   WordDB.KEY_BAIDU
               );
               if (DBUtils.insertIntoNote(bean)) {
@@ -149,9 +149,9 @@ public class TranslateFragment extends Fragment {
               }
               bean = new WordDB(
                   editTranslate.getText().toString(),
-                  "",
+
                   textIcibaTranslate.getText().toString(),
-                  "",
+
                   WordDB.KEY_JINSHAN
               );
               if (DBUtils.insertIntoNote(bean)) {
@@ -181,9 +181,9 @@ public class TranslateFragment extends Fragment {
               }
               bean = new WordDB(
                   editTranslate.getText().toString(),
-                  "",
+
                   textYoudaoTranslate.getText().toString(),
-                  "",
+
                   WordDB.KEY_YOUDAO
               );
               if (DBUtils.insertIntoNote(bean)) {
