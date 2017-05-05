@@ -15,9 +15,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="请输入翻译内容" android:id="@+id/edit_translate"
-            android:minLines="4"
-            android:gravity="top"/>
+            android:hint="请输入翻译内容" android:id="@+id/edit_translate"/>
       </android.support.design.widget.TextInputLayout>
 
       <com.dd.CircularProgressButton
@@ -56,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:text="有道结果："
+                android:text="结果："
             />
             <ImageButton
                 android:id="@+id/btn_youdao_copy"
@@ -108,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:text="百度结果："
+                android:text="结果："
             />
             <ImageButton
                 android:id="@+id/btn_baidu_copy"
@@ -160,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:text="金山结果："
+                android:text="结果："
             />
             <ImageButton
                 android:id="@+id/btn_iciba_copy"
