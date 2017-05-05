@@ -7,9 +7,6 @@
     android:name="com.kangtong.lingtranslate.ui.notice.ItemFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.kangtong.lingtranslate.ui.notice.WordNoteFragment"
-    tools:listitem="@layout/fragment_item"
-    android:background="@android:color/white"/>
+    tools:listitem="@layout/fragment_item"/>

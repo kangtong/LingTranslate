@@ -26,7 +26,9 @@ import com.kangtong.lingtranslate.constant.Constant;
 import com.kangtong.lingtranslate.model.BaiduResult;
 import com.kangtong.lingtranslate.model.IcibaEnglishResult;
 import com.kangtong.lingtranslate.model.YoudaoResult;
+import com.kangtong.lingtranslate.model.db.WordDB;
 import com.kangtong.lingtranslate.service.APIService;
+import com.kangtong.lingtranslate.util.DBUtils;
 import com.kangtong.lingtranslate.util.MD5;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,6 +62,7 @@ public class TranslateFragment extends Fragment {
   @BindView(R.id.text_iciba_translate) TextView textIcibaTranslate;
   @BindView(R.id.card_iciba) CardView cardIciba;
   //@BindView(R.id.text_baidu_translate) TextView textBaiduTranslate;
+  private WordDB bean;
 
   private String mParam1;
   private String mParam2;
@@ -102,6 +105,102 @@ public class TranslateFragment extends Fragment {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_translate, container, false);
     unbinder = ButterKnife.bind(this, view);
+    btnBaiduFavorite.setOnFavoriteChangeListener(
+        new MaterialFavoriteButton.OnFavoriteChangeListener() {
+          @Override
+          public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+            if (favorite) {
+              if (textBaiduTranslate.getText().toString().isEmpty()) {
+                Toast.makeText(getContext(), "请先完成翻译~", Toast.LENGTH_SHORT).show();
+                btnBaiduFavorite.setFavorite(false);
+                return;
+              }
+              bean = new WordDB(
+                  editTranslate.getText().toString(),
+                  "",
+                  textBaiduTranslate.getText().toString(),
+                  "",
+                  WordDB.KEY_BAIDU
+              );
+              if (DBUtils.insertIntoNote(bean)) {
+                Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
+              } else {
+                Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+                btnBaiduFavorite.setFavorite(false);
+              }
+            } else {
+              if (DBUtils.deleteFromNote(bean.getId())) {
+                Toast.makeText(getContext(), "已从单词本成功移除~", Toast.LENGTH_SHORT).show();
+              } else {
+                Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+              }
+            }
+          }
+        });
+    btnIcibaFavorite.setOnFavoriteChangeListener(
+        new MaterialFavoriteButton.OnFavoriteChangeListener() {
+          @Override
+          public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+            if (favorite) {
+              if (textIcibaTranslate.getText().toString().isEmpty()) {
+                Toast.makeText(getContext(), "请先完成翻译~", Toast.LENGTH_SHORT).show();
+                btnBaiduFavorite.setFavorite(false);
+                return;
+              }
+              bean = new WordDB(
+                  editTranslate.getText().toString(),
+                  "",
+                  textIcibaTranslate.getText().toString(),
+                  "",
+                  WordDB.KEY_JINSHAN
+              );
+              if (DBUtils.insertIntoNote(bean)) {
+                Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
+              } else {
+                Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+                btnBaiduFavorite.setFavorite(false);
+              }
+            } else {
+              if (DBUtils.deleteFromNote(bean.getId())) {
+                Toast.makeText(getContext(), "已从单词本成功移除~", Toast.LENGTH_SHORT).show();
+              } else {
+                Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+              }
+            }
+          }
+        });
+    btnYoudaoFavorite.setOnFavoriteChangeListener(
+        new MaterialFavoriteButton.OnFavoriteChangeListener() {
+          @Override
+          public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+            if (favorite) {
+              if (textYoudaoTranslate.getText().toString().isEmpty()) {
+                Toast.makeText(getContext(), "请先完成翻译~", Toast.LENGTH_SHORT).show();
+                btnBaiduFavorite.setFavorite(false);
+                return;
+              }
+              bean = new WordDB(
+                  editTranslate.getText().toString(),
+                  "",
+                  textYoudaoTranslate.getText().toString(),
+                  "",
+                  WordDB.KEY_YOUDAO
+              );
+              if (DBUtils.insertIntoNote(bean)) {
+                Toast.makeText(getContext(), "已添加至单词本~", Toast.LENGTH_SHORT).show();
+              } else {
+                Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+                btnBaiduFavorite.setFavorite(false);
+              }
+            } else {
+              if (DBUtils.deleteFromNote(bean.getId())) {
+                Toast.makeText(getContext(), "已从单词本成功移除~", Toast.LENGTH_SHORT).show();
+              } else {
+                Toast.makeText(getContext(), "出现未知错误,请重试( ╯□╰ )", Toast.LENGTH_SHORT).show();
+              }
+            }
+          }
+        });
     return view;
   }
 
@@ -202,7 +301,6 @@ public class TranslateFragment extends Fragment {
             new Callback<BaiduResult>() {
               @Override
               public void onResponse(Call<BaiduResult> call, Response<BaiduResult> response) {
-
                 if (text.equals(response.body().trans_result.get(0).dst)) {
                   APIService.baiduService()
                       .getBaidu(text, "auto", "zh", Constant.BAIDU_APPID, salt, sign)
@@ -214,9 +312,7 @@ public class TranslateFragment extends Fragment {
                               cardBaidu.setVisibility(View.VISIBLE);
                               textBaiduTranslate.setText(response.body().trans_result.get(0).dst);
                             }
-
                             @Override public void onFailure(Call<BaiduResult> call, Throwable t) {
-
                             }
                           });
                 } else {
@@ -232,43 +328,42 @@ public class TranslateFragment extends Fragment {
   }
 
   private void Iciba(final String text) {
-
-              APIService.icibaService().getEnglishIciba(text, Constant.ICBC_KEY, "json").enqueue(
-                  new Callback<IcibaEnglishResult>() {
-                    @Override
-                    public void onResponse(Call<IcibaEnglishResult> call,
-                        Response<IcibaEnglishResult> response) {
-                      if (response.body().word_name != null) {
-                        cardIciba.setVisibility(View.VISIBLE);
-                        StringBuffer explains = new StringBuffer();
-                        if (response.body().symbols.get(0).parts.get(0).means.get(
-                            0) instanceof String) {
-                          for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
-                              response.body().symbols.get(0).parts) {
-                            explains.append(parts.part + " ");
-                            for (Object s :
-                                parts.means) {
-                              explains.append(s + ";");
-                            }
-                            explains.append("\n");
-                          }
-                        } else {
-                          for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
-                              response.body().symbols.get(0).parts) {
-                            for (Object s :
-                                parts.means) {
-                              explains.append(
-                                  ((LinkedTreeMap) s).get("word_mean").toString() + "\n");
-                            }
-                          }
-                        }
-                        textIcibaTranslate.setText(explains);
-                      }
-                    }
-
-                    @Override public void onFailure(Call<IcibaEnglishResult> call, Throwable t) {
-                      cardIciba.setVisibility(View.GONE);
-                    }
-                  });
+    APIService.icibaService().getEnglishIciba(text, Constant.ICBC_KEY, "json").enqueue(
+        new Callback<IcibaEnglishResult>() {
+          @Override
+          public void onResponse(Call<IcibaEnglishResult> call,
+              Response<IcibaEnglishResult> response) {
+            if (response.body().word_name != null) {
+              cardIciba.setVisibility(View.VISIBLE);
+              StringBuffer explains = new StringBuffer();
+              if (response.body().symbols.get(0).parts.get(0).means.get(
+                  0) instanceof String) {
+                for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
+                    response.body().symbols.get(0).parts) {
+                  explains.append(parts.part + " ");
+                  for (Object s :
+                      parts.means) {
+                    explains.append(s + ";");
+                  }
+                  explains.append("\n");
+                }
+              } else {
+                for (IcibaEnglishResult.SymbolsBean.PartsBean parts :
+                    response.body().symbols.get(0).parts) {
+                  for (Object s :
+                      parts.means) {
+                    explains.append(
+                        ((LinkedTreeMap) s).get("word_mean").toString() + "\n");
+                  }
+                }
+              }
+              textIcibaTranslate.setText(explains);
             }
+          }
+
+          @Override public void onFailure(Call<IcibaEnglishResult> call, Throwable t) {
+            cardIciba.setVisibility(View.GONE);
+          }
+        });
+  }
 }

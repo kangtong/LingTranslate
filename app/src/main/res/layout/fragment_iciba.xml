@@ -75,13 +75,14 @@
             android:layout_height="wrap_content"/>
       </LinearLayout>
       <TextView
-          android:id="@+id/text_explains"
-          android:layout_width="wrap_content"
+          android:id="@+id/text_youdao"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginLeft="20dp"
           android:layout_marginRight="20dp"
-          android:textSize="18sp"
-          tools:text="adj. （男子）英俊的；可观的；大方的，慷慨的；健美而端庄的"
+          android:textSize="24sp"
+          android:textIsSelectable="true"
+          tools:text="快乐的"
       />
       <LinearLayout
           android:layout_width="wrap_content"
@@ -135,6 +136,31 @@
           android:layout_marginRight="20dp"
           android:textSize="18sp"
           tools:text="过去式：smiled\n过去完成时：smiled"/>
+      <TextView
+          android:id="@+id/text_explains"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="20dp"
+          android:layout_marginRight="20dp"
+          android:textSize="18sp"
+          tools:text="adj. （男子）英俊的；可观的；大方的，慷慨的；健美而端庄的"
+      />
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="20dp"
+          android:layout_marginRight="20dp"
+          android:textSize="16sp"
+          android:text="网络释义："
+      />
+      <TextView
+          android:id="@+id/text_web"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="25dp"
+          android:layout_marginRight="25dp"
+          android:textSize="16sp"
+      />
     </LinearLayout>
   </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -73,13 +73,11 @@ public class MainFragment extends Fragment {
     public TranslatePagerAdapter(FragmentManager fm) {
       super(fm);
       stringList = new ArrayList<>();
-      stringList.add("全部");
-      stringList.add("有道");
-      stringList.add("百度");
-      stringList.add("金山");
+      stringList.add("多结果对比");
+      stringList.add("多语言&段落");
+      stringList.add("单词详解");
       fragmentList = new ArrayList<>();
       fragmentList.add(new TranslateFragment());
-      fragmentList.add(new YoudaoFragment());
       fragmentList.add(new BaiduFragment());
       fragmentList.add(new IcibaFragment());
     }
